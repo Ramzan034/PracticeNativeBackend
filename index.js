@@ -10,7 +10,7 @@ app.use(cors());
 require("dotenv").config();
 let mrgn = require("morgan");
 
-let port = 4500 ;
+let port = 3000 ;
 
 //log request
 app.use(mrgn("dev"));
