@@ -19,7 +19,7 @@ mongoose.set("strictQuery", false);
 
 let mongoDB = async()=> {
     try{
-    let conn = await mongoose.connect(`mongodb+srv://programmer1zero1:Fm57t3dxhzCwKJlN@reactnative.su7tdhd.mongodb.net/`)
+    let conn = await mongoose.connect(process.env.MONGODB_URI)
     console.log(`MongoDB connected Successfullly`);
     }
     catch(error){
