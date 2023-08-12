@@ -107,7 +107,9 @@ app.post("/create", async (req, res) => {
 app.get("/get", async (req, res) => {
   try {
     const products = await productsDataScheme.find();
-    res.status(200).json(products);
+    res.status(200).json({message: "products fetched successfully.",data:products});
+
+    
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch products." });
   }
@@ -118,11 +120,8 @@ app.get("/get", async (req, res) => {
 // Get a specific product by ID
 app.get("/get/:id", async (req, res) => {
   try {
-    const product = await productsDataScheme.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ error: "Product not found." });
-    }
-    res.status(200).json(product);
+    const product = await productsDataScheme.findOne({ id: parseInt(req.params.id) })
+    res.json({message: "Product fetched successfully.",data:product});
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch product." });
   }
@@ -130,18 +129,19 @@ app.get("/get/:id", async (req, res) => {
 
 
 
-// Update a product
-app.put("/update/:id", async (req, res) => {
+
+
+app.patch("/update/:id", async (req, res) => {
   try {
-    const product = await productsDataScheme.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!product) {
+    const productId = req.params.id; // Parse the ID into an integer
+    
+    const updatedProduct = await productsDataScheme.updateOne({ id: productId }, { $set: req.body });
+    
+    if (updatedProduct.n === 0) {
       return res.status(404).json({ error: "Product not found." });
     }
-    res.status(200).json(product);
+    
+    res.status(200).json({ message: "Product updated successfully.",data:updatedProduct });
   } catch (error) {
     res.status(400).json({ error: "Failed to update product." });
   }
@@ -149,18 +149,24 @@ app.put("/update/:id", async (req, res) => {
 
 
 
-// Delete a product
+
+
+
 app.delete("/delete/:id", async (req, res) => {
   try {
-    const product = await productsDataScheme.findByIdAndDelete(req.params.id);
+    const productId = parseInt(req.params.id); // Parse the ID into an integer
+    const product = await productsDataScheme.deleteOne({id:productId});
+    
     if (!product) {
       return res.status(404).json({ error: "Product not found." });
     }
-    res.json({ message: "Product deleted successfully." });
+    
+    res.json({ message: "Product deleted successfully.",data:product });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete product." });
   }
 });
+
 
 
 
